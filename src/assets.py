@@ -31,13 +31,13 @@ def load_tiles():
 
     for tile in data["tiles"]:
         path = pathlib.Path(tile["image"])
-        dct[str(tile["id"])] = load_image(f"tiles/{path.stem}")
+        dct[tile["id"]] = load_image(f"tiles/{path.stem}")
 
     return dct
 
 
-def level_path(path):
-    return os.path.join("assets/maps", f"{path}")
+def level_path(path, extension="json"):
+    return os.path.join("assets/maps", f"{path}.{extension}")
 
 
 def load_assets():
@@ -54,4 +54,4 @@ def load_assets():
         }
     )
     sfx.update({"crunch": load_sound("crunch")})
-    maps.update({"level_1": Level(level_path("level_1"), images["tiles"])})
+    maps.update({"level_1": Level(level_path("level_1"), load_tiles())})

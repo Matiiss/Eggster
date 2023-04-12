@@ -14,11 +14,12 @@
     },
     "last.exportedFilePath": "C:/Users/Matiiss/PycharmProjects/Eggster/assets/maps",
     "last.imagePath": "C:/Users/Matiiss/PycharmProjects/Eggster/assets/images/tiles",
+    "lastUsedTilesetExportFilter": "All Files (*)",
     "map.lastUsedExportFilter": "CSV files (*.csv)",
     "map.lastUsedFormat": "tmx",
     "openFiles": [
     ],
-    "project": "untitled.tiled-project",
+    "project": "base.tiled-project",
     "recentFiles": [
     ],
     "tileset.lastUsedFormat": "tsx",

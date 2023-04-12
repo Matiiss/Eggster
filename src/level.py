@@ -1,24 +1,46 @@
-import csv
+import json
 import os
 
 import pygame
 
+from . import settings
+
 
 class Level:
     def __init__(self, path, image_map):
-        self.layers = []
-        self.collision_map = []
-        for idx, layer in enumerate(sorted(os.listdir(path), key=lambda x: int(x.split()[-1].split(".")[0]))):
-            self.layers.append([])
-            # if idx == 1:
-            #     self.collision_map.append([])
-            with open(os.path.join(path, layer)) as file:
-                reader = csv.reader(file, delimiter=",")
-                for row in reader:
-                    self.layers[-1].append([])
-                    if idx == 1:
-                        self.collision_map.append([])
-                    for cell in row:
-                        self.layers[-1][-1].append(image_map.get(cell))
-                        if idx == 1:
-                            self.collision_map[-1].append(cell in image_map)
+        with open(path) as file:
+            data = json.load(file)
+
+        w, h = data["width"], data["height"]
+
+        self.layers = [[[None for _ in range(w)] for _ in range(h)]]
+        self.collision_map = [[False for _ in range(w)] for _ in range(h)]
+        self.mask_map = [
+            [
+                pygame.Surface(
+                    (settings.TILE_SIZE, settings.TILE_SIZE), flags=pygame.SRCALPHA
+                )
+                for _ in range(w)
+            ]
+            for _ in range(h)
+        ]
+
+        data = {layer["name"]: layer for layer in data["layers"]}
+
+        for group in ["background", "collisions", "collectibles", "overlay"]:
+            layers = data[group]["layers"]
+            for layer in layers:
+                self.layers.append([[None for _ in range(w)] for _ in range(h)])
+                layer_data = layer["data"]
+                for y in range(h):
+                    for x in range(w):
+                        # numbering is off by one when exporting from Tiled as json
+                        img_id = layer_data[y * w + x] - 1
+                        self.layers[-1][y][x] = image_map.get(img_id)
+                        if group == "collisions" and not self.collision_map[y][x]:
+                            collide = img_id in image_map
+                            self.collision_map[y][x] = collide
+                            if collide:
+                                self.mask_map[y][x].blit(image_map[img_id], (0, 0))
+
+        self.mask_map = [[pygame.mask.from_surface(surf, threshold=1) for surf in row] for row in self.mask_map]

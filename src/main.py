@@ -35,6 +35,15 @@ while running:
     common.current_state.render()
 
     if settings.DEBUG:
+        for row_num, row in enumerate(common.mask_collision_map):
+            for col_num, mask in enumerate(row):
+                renderer.render(
+                    mask.to_surface(),
+                    (col_num * settings.TILE_SIZE, row_num * settings.TILE_SIZE),
+                )
+        if hasattr(common.current_state, "player"):
+            renderer.render(common.current_state.player.mask.to_surface(), common.current_state.player.pos_rect.topleft)
+
         for rect in renderer.debug_stack:
             surf, color, rect, width = rect
             rect = rect.copy()

@@ -6,11 +6,15 @@ from src import common, state, player, assets, renderer, settings, particles
 
 
 class Game(state.State):
+    SHOOT_LIGHT = pygame.event.custom_type()
+
     def __init__(self):
         self.player = player.Player((50, 50))
         common.collision_map = assets.maps["level_1"].collision_map or [
             []
         ]  # what if no second layer
+        common.mask_collision_map = assets.maps["level_1"].mask_map or [[]]
+        # print(*common.mask_collision_map, sep="\n")
         # print(common.collision_map)
         self.level = assets.maps["level_1"]
 
@@ -25,6 +29,8 @@ class Game(state.State):
         self.fast_particle_manager = particles.ParticleManager(
             assets.images["particles_fast"]
         )
+
+        self.shooting_light = False
 
     def update(self):
         self.particle_manager.update()
@@ -50,6 +56,26 @@ class Game(state.State):
         #     self.player.pos.copy(),
         #     pygame.Vector2(1, 0).rotate(random.randint(0, 359)),
         # )
+
+        mouse_world_pos = pygame.mouse.get_pos() + common.camera
+
+        for event in common.events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    self.shooting_light = not self.shooting_light
+                    if self.shooting_light:
+                        pygame.time.set_timer(self.SHOOT_LIGHT, 100)
+                    elif not self.shooting_light:
+                        pygame.time.set_timer(self.SHOOT_LIGHT, 0)
+            elif event.type == self.SHOOT_LIGHT:
+                direction = (
+                    (mouse_world_pos - self.player.pos) or pygame.Vector2(1, 0)
+                ).normalize()
+                for _ in range(10):
+                    self.particle_manager.spawn(
+                        self.player.pos.copy(),
+                        direction.rotate(random.randint(-30, 30)) * 2.5,
+                    )
 
     def render(self):
         for layer in self.level.layers:

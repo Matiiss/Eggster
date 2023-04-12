@@ -12,4 +12,5 @@ camera: pygame.Vector2 = pygame.Vector2()
 dt: float = 0
 events: list[pygame.Event] = []
 
-collision_map: list[list] = [[]]
+collision_map: list[list[bool]] = [[]]
+mask_collision_map: list[list[pygame.Mask]] = [[]]
