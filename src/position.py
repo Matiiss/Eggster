@@ -6,11 +6,11 @@ from . import settings
 class Position(pygame.Vector2):
     @property
     def cx(self) -> int:
-        return int(self.x) // settings.TILE_SIZE
+        return round(self.x) // settings.TILE_SIZE
 
     @property
     def cy(self) -> int:
-        return int(self.y) // settings.TILE_SIZE
+        return round(self.y) // settings.TILE_SIZE
 
     @property
     def xr(self) -> float:

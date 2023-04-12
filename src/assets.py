@@ -45,9 +45,13 @@ def load_assets():
         {
             "player": AsepriteSpriteSheet(image_path("player/player")),
             "tiles": load_tiles(),
+            "particles": AsepriteSpriteSheet(image_path("particles/particles")),
+            "particles_fast": AsepriteSpriteSheet(
+                image_path("particles/particles_fast")
+            ),
+            "eggs": AsepriteSpriteSheet(image_path("eggs/eggs")),
+            "decorations": AsepriteSpriteSheet(image_path("decorations/decorations")),
         }
     )
     sfx.update({"crunch": load_sound("crunch")})
-    maps.update({
-        "level_1": Level(level_path("level_1"), images["tiles"])
-    })
+    maps.update({"level_1": Level(level_path("level_1"), images["tiles"])})

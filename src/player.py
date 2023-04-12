@@ -12,12 +12,15 @@ class Player(entity.Entity):
         self.pos = pygame.Vector2(pos)
         self.animation = animation.Animation(assets.images["player"])
         self.image = self.animation.update(enums.EntityState.IDLE)
-        self.pos_rect = pygame.FRect(*self.pos, *self.image.get_size())
-        self.rect = pygame.FRect(*self.image.get_bounding_rect())
+
+        # responsible for collision detection and stuffs
+        self.pos_rect = pygame.FRect(0, 0, 20, 20)
+
+        # for positioning the image during rendering (see entity.Entity.render)
+        self.rect = pygame.FRect(self.image.get_rect())
 
         self.velocity = pygame.Vector2(0, 0)
         self.vel = settings.PLAYER_VEL
-        self.can_jump = False
         self.tiles = []
 
         self.state = enums.EntityState.IDLE
@@ -60,14 +63,12 @@ class Player(entity.Entity):
         self.velocity *= self.vel
         dx, dy = vel = self.velocity * common.dt
 
-        new_pos = position.Position(self.rect.center)
+        new_pos = position.Position(self.pos_rect.center)
         cx, cy = new_pos.cx, new_pos.cy
 
         self.tiles = self.get_surrounding_tiles(cx, cy)
         horizontal_projection = self.pos_rect.move(vel.x, 0)
         vertical_projection = self.pos_rect.move(0, vel.y)
-        self.can_jump = False
-
         for tile in self.tiles:
             if horizontal_projection.colliderect(tile):
                 if vel.x > 0:
@@ -93,7 +94,7 @@ class Player(entity.Entity):
             self.angle,
         )
 
-        self.pos_rect.topleft = self.pos
+        self.pos_rect.center = self.pos
         self.rect = self.image.get_rect(center=self.pos_rect.center)
 
     @staticmethod

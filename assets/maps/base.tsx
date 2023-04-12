@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.9" tiledversion="1.9.2" name="base" tilewidth="32" tileheight="32" tilecount="11" columns="0">
+<tileset version="1.9" tiledversion="1.9.2" name="base" tilewidth="32" tileheight="32" tilecount="21" columns="0">
  <editorsettings>
   <export target="tile_map.json" format="json"/>
  </editorsettings>
@@ -36,5 +36,35 @@
  </tile>
  <tile id="17">
   <image width="32" height="32" source="../images/tiles/tiles11.png"/>
+ </tile>
+ <tile id="18">
+  <image width="32" height="32" source="../images/tiles/tiles12.png"/>
+ </tile>
+ <tile id="19">
+  <image width="32" height="32" source="../images/tiles/tiles13.png"/>
+ </tile>
+ <tile id="20">
+  <image width="32" height="32" source="../images/tiles/tiles14.png"/>
+ </tile>
+ <tile id="21">
+  <image width="32" height="32" source="../images/tiles/tiles15.png"/>
+ </tile>
+ <tile id="22">
+  <image width="32" height="32" source="../images/tiles/tiles16.png"/>
+ </tile>
+ <tile id="23">
+  <image width="32" height="32" source="../images/tiles/tiles17.png"/>
+ </tile>
+ <tile id="24">
+  <image width="32" height="32" source="../images/tiles/tiles18.png"/>
+ </tile>
+ <tile id="25">
+  <image width="32" height="32" source="../images/tiles/tiles19.png"/>
+ </tile>
+ <tile id="26">
+  <image width="32" height="32" source="../images/tiles/tiles20.png"/>
+ </tile>
+ <tile id="27">
+  <image width="32" height="32" source="../images/tiles/tiles21.png"/>
  </tile>
 </tileset>

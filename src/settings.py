@@ -1,6 +1,6 @@
 import pygame
 
-WIDTH, HEIGHT = 640, 360
+SIZE = WIDTH, HEIGHT = 640, 360
 # FLAGS = 0
 FLAGS = pygame.SCALED
 DEBUG = False

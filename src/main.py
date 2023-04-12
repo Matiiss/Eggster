@@ -36,6 +36,9 @@ while running:
 
     if settings.DEBUG:
         for rect in renderer.debug_stack:
-            pygame.draw.rect(*rect)
+            surf, color, rect, width = rect
+            rect = rect.copy()
+            rect.topleft -= common.camera
+            pygame.draw.rect(surf, color, rect, width)
 
     pygame.display.flip()
