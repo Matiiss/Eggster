@@ -1,0 +1,26 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "base.tsx": {
+            "dynamicWrapping": true
+        }
+    },
+    "last.exportedFilePath": "C:/Users/Matiiss/PycharmProjects/Eggster/assets/maps",
+    "last.imagePath": "C:/Users/Matiiss/PycharmProjects/Eggster/assets/images/tiles",
+    "map.lastUsedExportFilter": "CSV files (*.csv)",
+    "map.lastUsedFormat": "tmx",
+    "openFiles": [
+    ],
+    "project": "untitled.tiled-project",
+    "recentFiles": [
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.type": 1
+}

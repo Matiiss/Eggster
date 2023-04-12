@@ -1,0 +1,24 @@
+{
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "base.tsx": {
+            "dynamicWrapping": true
+        },
+        "tile_map.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.exportedFilePath": "C:/Users/Matiiss/PycharmProjects/Eggster/assets/maps",
+    "last.imagePath": "C:/Users/Matiiss/PycharmProjects/Eggster/assets/images/tiles",
+    "lastUsedTilesetExportFilter": "JSON tileset files (*.tsj *.json)",
+    "map.lastUsedExportFilter": "CSV files (*.csv)",
+    "openFiles": [
+    ],
+    "project": "untitled.tiled-project",
+    "recentFiles": [
+        "tile_map.json"
+    ]
+}

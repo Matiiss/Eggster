@@ -1,0 +1,12 @@
+import pygame
+
+WIDTH, HEIGHT = 640, 360
+# FLAGS = 0
+FLAGS = pygame.SCALED
+DEBUG = False
+
+FPS = 60
+
+TILE_SIZE = 32
+
+PLAYER_VEL = 100
