@@ -199,12 +199,23 @@ class Player(entity.Entity):
             pos = (cx * settings.TILE_SIZE, cy * settings.TILE_SIZE)
             if self.collides(cx, cy):
                 if not (cx < 0 or cy < 0):
-                    masks.append(
-                        (
-                            common.mask_collision_map[cy][cx],
-                            pos,
+                    try:
+                        masks.append(
+                            (
+                                common.mask_collision_map[cy][cx],
+                                pos,
+                            )
                         )
-                    )
+                    except IndexError:
+                        masks.append(
+                            (
+                                pygame.Mask(
+                                    (settings.TILE_SIZE, settings.TILE_SIZE), fill=True
+                                ),
+                                pos,
+                            )
+                        )
+
                 else:
                     masks.append(
                         (
