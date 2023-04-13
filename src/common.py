@@ -14,3 +14,6 @@ events: list[pygame.Event] = []
 
 collision_map: list[list[bool]] = [[]]
 mask_collision_map: list[list[pygame.Mask]] = [[]]
+
+mouse_world_pos: pygame.Vector2
+mouse_direction: pygame.Vector2

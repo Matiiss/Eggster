@@ -1,3 +1,4 @@
+import functools
 import os
 import json
 import pathlib
@@ -24,6 +25,7 @@ def load_sound(path, extension="mp3"):
     return pygame.mixer.Sound(os.path.join("assets/sfx", f"{path}.{extension}"))
 
 
+@functools.cache
 def load_tiles():
     dct = {}
     with open("assets/maps/tile_map.json") as file:
@@ -51,6 +53,7 @@ def load_assets():
             ),
             "eggs": AsepriteSpriteSheet(image_path("eggs/eggs")),
             "decorations": AsepriteSpriteSheet(image_path("decorations/decorations")),
+            "headlamp": load_image("player/headlamp")
         }
     )
     sfx.update({"crunch": load_sound("crunch")})

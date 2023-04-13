@@ -30,6 +30,8 @@ class Player(entity.Entity):
         self.state = enums.EntityState.IDLE
         self.angle = 90
 
+        self.channel = None
+
     def update(self):
         dx, dy = 0, 0
         self.state = enums.EntityState.IDLE
@@ -71,12 +73,9 @@ class Player(entity.Entity):
         cx, cy = new_pos.cx, new_pos.cy
 
         # self.tiles = self.get_surrounding_tiles(cx, cy)
-        self.masks = self.get_surrounding_masks(cx, cy)
         # horizontal_projection = self.pos_rect.move(vel.x, 0)
         # vertical_projection = self.pos_rect.move(0, vel.y)
-        # for tile, mask in zip(self.tiles, self.masks):
-        #     if mask[0] is not None:
-        #         continue
+        # for tile in self.tiles:
         #     if horizontal_projection.colliderect(tile):
         #         if vel.x > 0:
         #             vel.x = tile.left - self.pos_rect.right
@@ -88,6 +87,7 @@ class Player(entity.Entity):
         #         elif vel.y < 0:
         #             vel.y = tile.bottom - self.pos_rect.top
 
+        self.masks = self.get_surrounding_masks(cx, cy)
         resolution = 0.05
         safeguard = 100
         for mask, pos in self.masks:
@@ -152,6 +152,14 @@ class Player(entity.Entity):
 
         self.pos_rect.center = self.pos
         self.rect = self.image.get_rect(center=self.pos_rect.center)
+
+        self.play_sfx()
+
+    def play_sfx(self):
+        if self.channel is not None and self.channel.get_busy():
+            return
+        if self.state == enums.EntityState.WALK:
+            self.channel = assets.sfx["crunch"].play()
 
     @staticmethod
     @functools.lru_cache(maxsize=512)

@@ -13,7 +13,9 @@ class Level:
 
         w, h = data["width"], data["height"]
 
-        self.layers = [[[None for _ in range(w)] for _ in range(h)]]
+        self.layers: list[list[list[pygame.Surface | None]]] = [
+            [[None for _ in range(w)] for _ in range(h)]
+        ]
         self.collision_map = [[False for _ in range(w)] for _ in range(h)]
         self.mask_map = [
             [
@@ -43,4 +45,21 @@ class Level:
                             if collide:
                                 self.mask_map[y][x].blit(image_map[img_id], (0, 0))
 
-        self.mask_map = [[pygame.mask.from_surface(surf, threshold=1) for surf in row] for row in self.mask_map]
+        self.mask_map = [
+            [pygame.mask.from_surface(surf, threshold=1) for surf in row]
+            for row in self.mask_map
+        ]
+        self.world_surf = pygame.Surface(
+            (w * settings.TILE_SIZE, h * settings.TILE_SIZE)
+        )
+        for layer in self.layers:
+            for row_num, row in enumerate(layer):
+                for col_num, col in enumerate(row):
+                    if col is not None:
+                        self.world_surf.blit(
+                            col,
+                            (
+                                col_num * settings.TILE_SIZE,
+                                row_num * settings.TILE_SIZE,
+                            ),
+                        )

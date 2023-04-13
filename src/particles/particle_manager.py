@@ -29,7 +29,7 @@ class ParticleManager:
     def update(self):
         for particle in self.particles:
             particle.time += int(common.dt * 1000)
-            particle.pos += particle.velocity
+            particle.pos += particle.velocity * common.dt
         self.particles = [
             p
             for p in self.particles

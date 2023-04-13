@@ -15,7 +15,8 @@ common.current_state = state.Game()
 
 running = True
 while running:
-    common.dt = common.clock.tick(settings.FPS) / 1000
+    common.dt = pygame.math.clamp(common.clock.tick(settings.FPS) / 1000, 0.008, 0.042)
+    pygame.display.set_caption(f"{common.clock.get_fps():.2f}")
     common.screen.fill("black")
 
     common.events = pygame.event.get()

@@ -10,18 +10,43 @@
     "fileStates": {
         "base.tsx": {
             "dynamicWrapping": true
+        },
+        "level_1.json": {
+            "scale": 1.87625,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 480.47968021319116,
+                "y": 320.31978680879416
+            }
+        },
+        "level_1.tmx": {
+            "expandedGroupLayers": [
+                9,
+                10,
+                5,
+                7
+            ],
+            "scale": 1.8495312499999998,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 532.2970347216356,
+                "y": 319.54042409394276
+            }
         }
     },
     "last.exportedFilePath": "C:/Users/Matiiss/PycharmProjects/Eggster/assets/maps",
     "last.imagePath": "C:/Users/Matiiss/PycharmProjects/Eggster/assets/images/tiles",
     "lastUsedTilesetExportFilter": "All Files (*)",
-    "map.lastUsedExportFilter": "CSV files (*.csv)",
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "map.lastUsedFormat": "tmx",
     "openFiles": [
     ],
     "project": "base.tiled-project",
     "recentFiles": [
+        "level_1.tmx",
+        "level_1.json"
     ],
+    "resizeMap.removeObjects": true,
     "tileset.lastUsedFormat": "tsx",
     "tileset.type": 1
 }
