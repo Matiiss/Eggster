@@ -14,6 +14,10 @@ class Game(state.State):
         common.collision_map = level.collision_map
         common.mask_collision_map = level.mask_map
         common.collectibles = level.collectibles
+        common.mission_group = level.mission_group
+
+        common.mission_started = False
+
         self.level = level
 
         self.night = pygame.Surface(settings.SIZE, flags=pygame.SRCALPHA)
@@ -39,7 +43,7 @@ class Game(state.State):
 
     def update(self):
         self.time_left -= common.dt
-        if self.time_left <= 0:
+        if self.time_left <= 0 or all(target.hit for target in common.mission_group):
             common.current_state = state.State()
 
         self.particle_manager.update()
@@ -47,8 +51,7 @@ class Game(state.State):
 
         common.collectibles.update()
 
-        self.player.update()
-        self.player.collect(common.collectibles)
+        self.update_player()
 
         self.update_camera()
 
@@ -58,15 +61,15 @@ class Game(state.State):
         ).normalize()
 
         for event in common.events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    self.shooting_light = not self.shooting_light
-                    if self.shooting_light:
-                        pygame.time.set_timer(self.SHOOT_LIGHT, 50)
-                    elif not self.shooting_light:
-                        pygame.time.set_timer(self.SHOOT_LIGHT, 0)
+            # if event.type == pygame.MOUSEBUTTONDOWN:
+            #     if event.button == 1:
+            #         self.shooting_light = not self.shooting_light
+            #         if self.shooting_light:
+            #             pygame.time.set_timer(self.SHOOT_LIGHT, 50)
+            #         elif not self.shooting_light:
+            #             pygame.time.set_timer(self.SHOOT_LIGHT, 0)
 
-            elif event.type == self.SHOOT_LIGHT:
+            if event.type == self.SHOOT_LIGHT:
                 for _ in range(10):
                     self.particle_manager.spawn(
                         self.player.pos.copy(),
@@ -100,6 +103,33 @@ class Game(state.State):
             len(common.collision_map) * settings.TILE_SIZE - settings.HEIGHT,
         )
 
+    def update_player(self):
+        self.player.update()
+        self.player.collect(common.collectibles)
+        self.player.inventory.update((10, settings.HEIGHT - 27))
+
+        active_item = self.player.inventory.active_item
+
+        for event in common.events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.player.inventory.just_collided:
+                    if active_item is not None and active_item.name == "headlamp":
+                        pygame.time.set_timer(self.SHOOT_LIGHT, 50)
+                        self.shooting_light = True
+                    else:
+                        pygame.time.set_timer(self.SHOOT_LIGHT, 0)
+                        self.shooting_light = False
+                    if active_item is not None and active_item.name is None:
+                        for target in common.mission_group:
+                            if self.player.pos_rect.colliderect(target.rect):
+                                target.image = active_item.image
+                                target.hit = True
+                                self.player.inventory.remove_just_collided()
+                                break
+                        else:
+                            assets.sfx["nope"].play()
+                            self.player.inventory.active_item = None
+
     def render_tiles(self):
         for layer in self.level.layers:
             for row_num, row in enumerate(layer):
@@ -123,6 +153,8 @@ class Game(state.State):
                             )
 
         renderer.render(self.level.world_surf, (0, 0))
+        if common.mission_started:
+            common.mission_group.render()
 
     def render_light_overlay(self):
         if self.shooting_light:
@@ -166,12 +198,12 @@ class Game(state.State):
         self.timer_bar()
 
         if settings.DEBUG:
-            pos_surf = assets.fonts["default"][16].render(
+            pos_surf = assets.fonts["forward"][8].render(
                 f"player pos: {self.player.pos_rect.center}", True, "white"
             )
             self.hud_surf.blit(pos_surf, (10, 10))
 
-        self.player.inventory.render((10, settings.HEIGHT - 27), target=self.hud_surf)
+        self.player.inventory.render(target=self.hud_surf)
 
         renderer.render(self.hud_surf, (0, 0), static=True)
 

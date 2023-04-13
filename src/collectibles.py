@@ -19,6 +19,7 @@ class Collectible(entity.Entity):
 class Basket(Collectible):
     def __init__(self, pos, image):
         super().__init__(pos, image)
+        self.rect = pygame.FRect(image.get_rect(topleft=pos))
         images = assets.images
         self.items = [
             inventory.Item(images["headlamp"], name="headlamp"),

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.9" tiledversion="1.9.2" name="base" tilewidth="32" tileheight="32" tilecount="41" columns="0">
+<tileset version="1.9" tiledversion="1.9.2" name="base" tilewidth="32" tileheight="32" tilecount="42" columns="0">
  <editorsettings>
   <export target="tile_map.json" format="json"/>
  </editorsettings>
@@ -126,5 +126,8 @@
  </tile>
  <tile id="96">
   <image width="32" height="32" source="../images/tiles/decorations3.png"/>
+ </tile>
+ <tile id="101">
+  <image width="32" height="32" source="../images/tiles/tiles34.png"/>
  </tile>
 </tileset>

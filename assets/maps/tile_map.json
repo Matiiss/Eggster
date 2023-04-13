@@ -8,7 +8,7 @@
  "margin":0,
  "name":"base",
  "spacing":0,
- "tilecount":41,
+ "tilecount":42,
  "tiledversion":"1.9.2",
  "tileheight":32,
  "tiles":[
@@ -255,6 +255,12 @@
         {
          "id":96,
          "image":"..\/images\/tiles\/decorations3.png",
+         "imageheight":32,
+         "imagewidth":32
+        }, 
+        {
+         "id":101,
+         "image":"..\/images\/tiles\/tiles34.png",
          "imageheight":32,
          "imagewidth":32
         }],

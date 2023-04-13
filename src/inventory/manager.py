@@ -1,41 +1,76 @@
 import functools
-import typing
+import typing as t
 
 import pygame
 
 from src import common, renderer, settings
 
-if typing.TYPE_CHECKING:
+if t.TYPE_CHECKING:
     from .item import Item
 
 
 class InventoryManager:
     def __init__(self, items: list["Item"] | None = None):
         self.items = items or []
+        self.rects: list[pygame.Rect] = []
+        self.images: list[pygame.Surface] = []
+        self.active_item: t.Optional["Item"] = None
+        self.just_collided: bool = False
+        self.collided_index: int | None = None
 
-    def render(self, pos, size=(16, 16), target: pygame.Surface | None = None):
-        if target is None:
-            target = common.screen
+    def update(self, pos: tuple[int, int], size: tuple[int, int] = (16, 16)):
         x, y = pos
         initial_x = x
 
-        for col, item in enumerate(self.items):
+        self.just_collided = False
+        self.collided_index = None
+
+        self.rects = []
+        self.images = []
+        for idx, item in enumerate(self.items.copy()):
             pos = (x, y)
             img = self.resize(item.image, size)
             rect = img.get_rect(topleft=pos).inflate(2, 2)
             x += rect.width + 1
-            renderer.render(img, pos, target=target, static=True)
-            pygame.draw.rect(target, "white", rect, width=1)
+
+            self.collision(rect, item, idx)
+
+            self.rects.append(rect)
+            self.images.append(img)
 
         if self.items:
             rect = pygame.Rect(initial_x - 1, y, x - initial_x - 1, size[1])
             rect.inflate_ip(4, 6)
+            self.rects.append(rect)
+
+    def render(self, target: pygame.Surface | None = None):
+        if target is None:
+            target = common.screen
+
+        for image, rect in zip(self.images, self.rects):
+            renderer.render(image, image.get_rect(center=rect.center), target=target, static=True)
             pygame.draw.rect(target, "white", rect, width=1)
+
+        if self.rects:
+            pygame.draw.rect(target, "white", self.rects[-1], width=1)
 
     @staticmethod
     @functools.cache
     def resize(surf, size):
         return pygame.transform.scale(surf, size)
 
-    def update(self, items: list["Item"]):
+    def update_inventory(self, items: list["Item"]):
         self.items = items
+
+    def collision(self, rect: pygame.Rect | pygame.FRect, item: "Item", idx: int):
+        for event in common.events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1 and rect.collidepoint(event.pos):
+                    self.active_item = None if self.active_item is item else item
+                    self.just_collided = True
+                    self.collided_index = idx
+
+    def remove_just_collided(self):
+        if self.just_collided:
+            self.items.pop(self.collided_index)
+            self.active_item = None

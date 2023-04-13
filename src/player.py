@@ -21,7 +21,7 @@ class Player(entity.Entity):
 
         # ~~dual collision detection for some tiles, hehe~~
         # nope, it's just masks now
-        self.mask = pygame.Mask(self.pos_rect.size, fill=True)
+        self.mask = pygame.Mask(pygame.Vector2(self.pos_rect.size), fill=True)
 
         self.velocity = pygame.Vector2(0, 0)
         self.vel = settings.PLAYER_VEL
@@ -249,7 +249,8 @@ class Player(entity.Entity):
                 self.collected.add(collectible)
 
                 if isinstance(collectible, collectibles.Basket):
-                    self.inventory.update(collectible.items)
+                    self.inventory.update_inventory(collectible.items)
+                    common.mission_started = True
 
         for collectible in lst:
             collectible_group.remove(collectible)

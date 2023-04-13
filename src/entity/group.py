@@ -9,8 +9,8 @@ if t.TYPE_CHECKING:
 class Group:
     entities: set
 
-    def __init__(self):
-        self.entities = set()
+    def __init__(self, entities: list["Entity"] | None = None):
+        self.entities: set["Entity"] = set(entities or [])
 
     def add(self, entity: "Entity"):
         self.entities.add(entity)

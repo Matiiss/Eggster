@@ -28,6 +28,7 @@ class Level:
         ]
 
         self.collectibles = entity.Group()
+        self.mission_group = entity.Group()
 
         data = {layer["name"]: layer for layer in data["layers"]}
 
@@ -42,9 +43,10 @@ class Level:
                         img_id = layer_data[y * w + x] - 1
 
                         self.layers[-1][y][x] = image_map.get(img_id)
-                        if group == "collisions" and not self.collision_map[y][x]:
+                        if group == "collisions":
                             collide = img_id in image_map
-                            self.collision_map[y][x] = collide
+                            if not self.collision_map[y][x]:
+                                self.collision_map[y][x] = collide
                             if collide:
                                 self.mask_map[y][x].blit(image_map[img_id], (0, 0))
 
@@ -64,6 +66,24 @@ class Level:
                         (x * settings.TILE_SIZE, y * settings.TILE_SIZE), image
                     )
                     self.collectibles.add(collectible)
+
+        for layer in data["mission"]["layers"]:
+            layer_data = layer["data"]
+            for y in range(h):
+                for x in range(w):
+                    # numbering is off by one when exporting from Tiled as json
+                    img_id = layer_data[y * w + x] - 1
+                    image = image_map.get(img_id)
+                    if image is None:
+                        continue
+
+                    target = entity.Entity()
+                    target.image = image
+                    target.rect = image.get_rect(
+                        topleft=(x * settings.TILE_SIZE, y * settings.TILE_SIZE)
+                    )
+                    target.hit = False
+                    self.mission_group.add(target)
 
         self.mask_map = [
             [pygame.mask.from_surface(surf, threshold=1) for surf in row]

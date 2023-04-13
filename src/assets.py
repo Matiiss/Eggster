@@ -9,7 +9,7 @@ from .spritesheet import AsepriteSpriteSheet
 from .level import Level
 
 images = {}
-sfx = {}
+sfx: dict[str, pygame.mixer.Sound] = {}
 maps = {}
 fonts: dict[str, dict[int, pygame.Font]] = {}
 
@@ -24,6 +24,10 @@ def load_image(path):
 
 def load_sound(path, extension="mp3"):
     return pygame.mixer.Sound(os.path.join("assets/sfx", f"{path}.{extension}"))
+
+
+def load_fonts(path, sizes):
+    return {size: pygame.Font(os.path.join("assets/fonts", path), size) for size in sizes}
 
 
 @functools.cache
@@ -54,9 +58,21 @@ def load_assets():
             ),
             "eggs": AsepriteSpriteSheet(image_path("eggs/eggs")),
             "decorations": AsepriteSpriteSheet(image_path("decorations/decorations")),
-            "headlamp": load_image("player/headlamp")
+            "headlamp": load_image("player/headlamp"),
         }
     )
-    sfx.update({"crunch": load_sound("crunch"), "sloop": load_sound("sloop")})
+    sfx.update(
+        {
+            "crunch": load_sound("crunch"),
+            "sloop": load_sound("sloop"),
+            "nope": load_sound("nope"),
+        }
+    )
     maps.update({"level_1": Level(level_path("level_1"), load_tiles())})
-    fonts.update({"default": {16: pygame.Font(None, 16)}})
+    fonts.update(
+        {
+            "default": {16: pygame.Font(None, 16)},
+            "forward": {**load_fonts("FFFFORWA.TTF", [6, 8, 10, 12, 14, 16, 18])},
+            "forward_regular": {**load_fonts("fff-forward.regular.ttf", [6, 8, 10, 12, 14, 16, 18])}
+        }
+    )
