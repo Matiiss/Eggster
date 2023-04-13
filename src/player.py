@@ -2,7 +2,7 @@ import functools
 
 import pygame
 
-from . import entity, assets, animation, enums, settings, common, position, renderer
+from . import entity, assets, animation, enums, settings, common, position, renderer, collectibles, inventory
 
 
 class Player(entity.Entity):
@@ -19,7 +19,8 @@ class Player(entity.Entity):
         # for positioning the image during rendering (see entity.Entity.render)
         self.rect = pygame.FRect(self.image.get_rect())
 
-        # dual collision detection for some tiles, hehe
+        # ~~dual collision detection for some tiles, hehe~~
+        # nope, it's just masks now
         self.mask = pygame.Mask(self.pos_rect.size, fill=True)
 
         self.velocity = pygame.Vector2(0, 0)
@@ -31,6 +32,9 @@ class Player(entity.Entity):
         self.angle = 90
 
         self.channel = None
+
+        self.collected = entity.Group()
+        self.inventory = inventory.InventoryManager()
 
     def update(self):
         dx, dy = 0, 0
@@ -235,3 +239,17 @@ class Player(entity.Entity):
                     )
 
         return masks
+
+    def collect(self, collectible_group: entity.Group):
+        lst = []
+        for collectible in collectible_group:
+            if self.pos_rect.colliderect(collectible.rect):
+                assets.sfx["sloop"].play()
+                lst.append(collectible)
+                self.collected.add(collectible)
+
+                if isinstance(collectible, collectibles.Basket):
+                    self.inventory.update(collectible.items)
+
+        for collectible in lst:
+            collectible_group.remove(collectible)

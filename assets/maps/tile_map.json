@@ -8,7 +8,7 @@
  "margin":0,
  "name":"base",
  "spacing":0,
- "tilecount":36,
+ "tilecount":41,
  "tiledversion":"1.9.2",
  "tileheight":32,
  "tiles":[
@@ -187,6 +187,30 @@
          "imagewidth":32
         }, 
         {
+         "id":97,
+         "image":"..\/images\/tiles\/tiles30.png",
+         "imageheight":32,
+         "imagewidth":32
+        }, 
+        {
+         "id":98,
+         "image":"..\/images\/tiles\/tiles31.png",
+         "imageheight":32,
+         "imagewidth":32
+        }, 
+        {
+         "id":99,
+         "image":"..\/images\/tiles\/tiles32.png",
+         "imageheight":32,
+         "imagewidth":32
+        }, 
+        {
+         "id":100,
+         "image":"..\/images\/tiles\/tiles33.png",
+         "imageheight":32,
+         "imagewidth":32
+        }, 
+        {
          "id":58,
          "image":"..\/images\/tiles\/eggs1.png",
          "imageheight":32,
@@ -225,6 +249,12 @@
         {
          "id":64,
          "image":"..\/images\/tiles\/eggs7.png",
+         "imageheight":32,
+         "imagewidth":32
+        }, 
+        {
+         "id":96,
+         "image":"..\/images\/tiles\/decorations3.png",
          "imageheight":32,
          "imagewidth":32
         }],

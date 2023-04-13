@@ -11,6 +11,7 @@ from .level import Level
 images = {}
 sfx = {}
 maps = {}
+fonts: dict[str, dict[int, pygame.Font]] = {}
 
 
 def image_path(path, extension="png"):
@@ -56,5 +57,6 @@ def load_assets():
             "headlamp": load_image("player/headlamp")
         }
     )
-    sfx.update({"crunch": load_sound("crunch")})
+    sfx.update({"crunch": load_sound("crunch"), "sloop": load_sound("sloop")})
     maps.update({"level_1": Level(level_path("level_1"), load_tiles())})
+    fonts.update({"default": {16: pygame.Font(None, 16)}})

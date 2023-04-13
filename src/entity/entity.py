@@ -25,3 +25,6 @@ class Entity:
     def rotate(image, angle):
         return pygame.transform.rotate(image, angle)
 
+    def update(self, *args, **kwargs):
+        pass
+

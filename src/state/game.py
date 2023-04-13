@@ -9,28 +9,28 @@ class Game(state.State):
     SHOOT_LIGHT = pygame.event.custom_type()
 
     def __init__(self):
-        self.player = player.Player((50, 50))
-        common.collision_map = assets.maps["level_1"].collision_map or [
-            []
-        ]  # what if no second layer
-        common.mask_collision_map = assets.maps["level_1"].mask_map or [[]]
-        # print(*common.mask_collision_map, sep="\n")
-        # print(common.collision_map)
-        self.level = assets.maps["level_1"]
+        self.player = player.Player((540, 820))
+        level = assets.maps["level_1"]
+        common.collision_map = level.collision_map
+        common.mask_collision_map = level.mask_map
+        common.collectibles = level.collectibles
+        self.level = level
 
         self.night = pygame.Surface(settings.SIZE, flags=pygame.SRCALPHA)
         self.night.fill("grey10")
 
         self.darkener = pygame.Surface(settings.SIZE)
         self.darkener.fill("grey10")
-        self.darkener.set_alpha(120)
+        self.darkener.set_alpha(100)  # 120
 
         self.particle_manager = particles.ParticleManager(assets.images["particles"])
         self.fast_particle_manager = particles.ParticleManager(
             assets.images["particles_fast"]
         )
 
-        self.hud_surf = pygame.Surface((settings.WIDTH, settings.HEIGHT), flags=pygame.SRCALPHA)
+        self.hud_surf = pygame.Surface(
+            (settings.WIDTH, settings.HEIGHT), flags=pygame.SRCALPHA
+        )
 
         self.shooting_light = False
 
@@ -44,27 +44,13 @@ class Game(state.State):
 
         self.particle_manager.update()
         self.fast_particle_manager.update()
+
+        common.collectibles.update()
+
         self.player.update()
-        cam = (
-            self.player.rect.center
-            - pygame.Vector2(settings.WIDTH, settings.HEIGHT) / 2
-            - common.camera
-        ) * 0.05
-        common.camera += round(cam)
-        # easter egg??? nope
-        common.camera.x, common.camera.y = pygame.math.clamp(
-            common.camera.x,
-            0,
-            len(common.collision_map[0]) * settings.TILE_SIZE - settings.WIDTH,
-        ), pygame.math.clamp(
-            common.camera.y,
-            0,
-            len(common.collision_map) * settings.TILE_SIZE - settings.HEIGHT,
-        )
-        # self.particle_manager.spawn(
-        #     self.player.pos.copy(),
-        #     pygame.Vector2(1, 0).rotate(random.randint(0, 359)),
-        # )
+        self.player.collect(common.collectibles)
+
+        self.update_camera()
 
         common.mouse_world_pos = pygame.mouse.get_pos() + common.camera
         common.mouse_direction = (
@@ -88,6 +74,33 @@ class Game(state.State):
                     )
 
     def render(self):
+        self.render_tiles()
+
+        common.collectibles.render()
+        self.player.render()
+
+        self.render_light_overlay()  # todo turning this off could be an easter egg
+        self.render_hud()
+
+    def update_camera(self):
+        cam = (
+            self.player.rect.center
+            - pygame.Vector2(settings.WIDTH, settings.HEIGHT) / 2
+            - common.camera
+        ) * 0.05
+        common.camera += round(cam)
+        # easter egg??? nope
+        common.camera.x, common.camera.y = pygame.math.clamp(
+            common.camera.x,
+            0,
+            len(common.collision_map[0]) * settings.TILE_SIZE - settings.WIDTH,
+        ), pygame.math.clamp(
+            common.camera.y,
+            0,
+            len(common.collision_map) * settings.TILE_SIZE - settings.HEIGHT,
+        )
+
+    def render_tiles(self):
         for layer in self.level.layers:
             for row_num, row in enumerate(layer):
                 for col_num, col in enumerate(row):
@@ -111,14 +124,14 @@ class Game(state.State):
 
         renderer.render(self.level.world_surf, (0, 0))
 
-        self.player.render()
+    def render_light_overlay(self):
         if self.shooting_light:
             img = pygame.transform.rotate(
-                assets.images["headlamp"], common.mouse_direction.angle_to(pygame.Vector2(1, 0))
+                assets.images["headlamp"],
+                common.mouse_direction.angle_to(pygame.Vector2(1, 0)),
             )
             renderer.render(img, img.get_rect(center=self.player.rect.center))
 
-        # todo turning this off could be an easter egg
         self.night.fill("grey10")
 
         pygame.draw.circle(
@@ -143,15 +156,22 @@ class Game(state.State):
 
         # add those other particles here, so they're drawn on top of the surface
         self.particle_manager.render(self.night, pygame.BLEND_RGBA_SUB)
-        # self.particle_manager.render(self.night, pygame.BLEND_RGBA_MAX)
 
         renderer.render(self.night, (0, 0), static=True)
         renderer.render(self.darkener, (0, 0), static=True)
 
-        # hud
+    def render_hud(self):
         self.hud_surf.fill((0, 0, 0, 0))
 
         self.timer_bar()
+
+        if settings.DEBUG:
+            pos_surf = assets.fonts["default"][16].render(
+                f"player pos: {self.player.pos_rect.center}", True, "white"
+            )
+            self.hud_surf.blit(pos_surf, (10, 10))
+
+        self.player.inventory.render((10, settings.HEIGHT - 27), target=self.hud_surf)
 
         renderer.render(self.hud_surf, (0, 0), static=True)
 

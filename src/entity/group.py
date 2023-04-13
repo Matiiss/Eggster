@@ -22,3 +22,13 @@ class Group:
     def render(self):
         for entity in self.entities:
             entity.render()
+
+    def empty(self):
+        self.entities = set()
+
+    def __iter__(self):
+        return iter(self.entities)
+
+    def update(self, *args, **kwargs):
+        for entity in self.entities:
+            entity.update(*args, **kwargs)
