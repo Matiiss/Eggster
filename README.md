@@ -7,3 +7,8 @@ git clone https://github.com/Matiiss/Eggster
 cd Eggster
 python entry_point.py
 ```
+
+Maybe this works too
+```cmd
+python -m src.main
+```
