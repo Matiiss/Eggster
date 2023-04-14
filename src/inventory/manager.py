@@ -47,9 +47,11 @@ class InventoryManager:
         if target is None:
             target = common.screen
 
-        for image, rect in zip(self.images, self.rects):
+        for image, rect, item in zip(self.images, self.rects, self.items):
             renderer.render(image, image.get_rect(center=rect.center), target=target, static=True)
             pygame.draw.rect(target, "white", rect, width=1)
+            if self.active_item is item:
+                pygame.draw.rect(target, "blue", rect.inflate(2, 2), width=2)
 
         if self.rects:
             pygame.draw.rect(target, "white", self.rects[-1], width=1)

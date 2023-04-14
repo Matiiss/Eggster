@@ -31,6 +31,16 @@ class Game(state.State):
         self.fast_particle_manager = particles.ParticleManager(
             assets.images["particles_fast"]
         )
+        self.info_particle_managers: dict[str, particles.ParticleManager] = {
+            "invalid location": particles.ParticleManager.from_string(
+                assets.fonts["forward"][8],
+                "invalid location",
+                10,
+                delay=[350, 200, 50, 25, 20, 20, 20, 20, 10, 10],
+                alpha=range(255, 5, -25),
+                color="white",
+            )
+        }
 
         self.hud_surf = pygame.Surface(
             (settings.WIDTH, settings.HEIGHT), flags=pygame.SRCALPHA
@@ -48,6 +58,8 @@ class Game(state.State):
 
         self.particle_manager.update()
         self.fast_particle_manager.update()
+        for manager in self.info_particle_managers.values():
+            manager.update()
 
         common.collectibles.update()
 
@@ -128,6 +140,9 @@ class Game(state.State):
                                 break
                         else:
                             assets.sfx["nope"].play()
+                            self.info_particle_managers["invalid location"].spawn(
+                                event.pos, pygame.Vector2(0, -40)
+                            )
                             self.player.inventory.active_item = None
 
     def render_tiles(self):
@@ -204,6 +219,9 @@ class Game(state.State):
             self.hud_surf.blit(pos_surf, (10, 10))
 
         self.player.inventory.render(target=self.hud_surf)
+
+        for manager in self.info_particle_managers.values():
+            manager.render(self.hud_surf, static=True)
 
         renderer.render(self.hud_surf, (0, 0), static=True)
 
