@@ -30,6 +30,9 @@ class Level:
         self.collectibles = entity.Group()
         self.mission_group = entity.Group()
 
+        self.level_map = pygame.Surface((w, h))
+        self.level_map.fill("#C8AD7F")
+
         data = {layer["name"]: layer for layer in data["layers"]}
 
         for group in ["background", "collisions", "overlay"]:
@@ -84,6 +87,10 @@ class Level:
                     )
                     target.hit = False
                     self.mission_group.add(target)
+
+                    self.level_map.set_at((x, y), "red")
+
+        self.level_map = pygame.transform.scale_by(self.level_map, 4)
 
         self.mask_map = [
             [pygame.mask.from_surface(surf, threshold=1) for surf in row]

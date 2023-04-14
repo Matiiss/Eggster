@@ -2,7 +2,19 @@ import functools
 
 import pygame
 
-from . import entity, assets, animation, enums, settings, common, position, renderer, collectibles, inventory
+from . import (
+    entity,
+    assets,
+    animation,
+    enums,
+    settings,
+    common,
+    position,
+    renderer,
+    collectibles,
+    inventory,
+    state,
+)
 
 
 class Player(entity.Entity):
@@ -251,6 +263,11 @@ class Player(entity.Entity):
                 if isinstance(collectible, collectibles.Basket):
                     self.inventory.update_inventory(collectible.items)
                     common.mission_started = True
+
+                    if isinstance(common.current_state, state.Game):
+                        common.current_state.info_particle_managers["basket"].spawn(
+                            collectible.rect.center, pygame.Vector2(0, -40)
+                        )
 
         for collectible in lst:
             collectible_group.remove(collectible)

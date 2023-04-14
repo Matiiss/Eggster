@@ -15,6 +15,7 @@ class Game(state.State):
         common.mask_collision_map = level.mask_map
         common.collectibles = level.collectibles
         common.mission_group = level.mission_group
+        common.level_map = level.level_map
 
         common.mission_started = False
 
@@ -24,7 +25,10 @@ class Game(state.State):
         self.night.fill("grey10")
 
         self.darkener = pygame.Surface(settings.SIZE)
-        self.darkener.fill("grey10")
+        # self.darkener.fill("#fff600")  # grey10
+        # self.darkener.fill("#FFFF7D")  # grey10
+        # self.darkener.fill("#FFFFB3")  # grey10
+        self.darkener.fill("grey10")  # grey10
         self.darkener.set_alpha(100)  # 120
 
         self.particle_manager = particles.ParticleManager(assets.images["particles"])
@@ -39,7 +43,15 @@ class Game(state.State):
                 delay=[350, 200, 50, 25, 20, 20, 20, 20, 10, 10],
                 alpha=range(255, 5, -25),
                 color="white",
-            )
+            ),
+            "basket": particles.ParticleManager.from_string(
+                assets.fonts["forward"][8],
+                "basket",
+                10,
+                delay=[350, 200, 50, 25, 20, 20, 20, 20, 10, 10],
+                alpha=range(255, 5, -25),
+                color="white",
+            ),
         }
 
         self.hud_surf = pygame.Surface(
@@ -47,6 +59,7 @@ class Game(state.State):
         )
 
         self.shooting_light = False
+        self.show_map = False
 
         self.total_time = 60 * 5  # seconds * minutes = total seconds
         self.time_left = self.total_time
@@ -116,34 +129,42 @@ class Game(state.State):
         )
 
     def update_player(self):
-        self.player.update()
+        if not self.show_map:
+            self.player.update()
         self.player.collect(common.collectibles)
         self.player.inventory.update((10, settings.HEIGHT - 27))
 
         active_item = self.player.inventory.active_item
 
-        for event in common.events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.player.inventory.just_collided:
-                    if active_item is not None and active_item.name == "headlamp":
-                        pygame.time.set_timer(self.SHOOT_LIGHT, 50)
-                        self.shooting_light = True
-                    else:
-                        pygame.time.set_timer(self.SHOOT_LIGHT, 0)
-                        self.shooting_light = False
-                    if active_item is not None and active_item.name is None:
-                        for target in common.mission_group:
-                            if self.player.pos_rect.colliderect(target.rect):
-                                target.image = active_item.image
-                                target.hit = True
-                                self.player.inventory.remove_just_collided()
-                                break
-                        else:
-                            assets.sfx["nope"].play()
-                            self.info_particle_managers["invalid location"].spawn(
-                                event.pos, pygame.Vector2(0, -40)
-                            )
-                            self.player.inventory.active_item = None
+        if self.player.inventory.just_collided:
+            if active_item is not None and active_item.name == "headlamp":
+                pygame.time.set_timer(self.SHOOT_LIGHT, 50)
+                self.shooting_light = True
+                # assets.sfx["humm"].play(loops=-1)
+            else:
+                pygame.time.set_timer(self.SHOOT_LIGHT, 0)
+                self.shooting_light = False
+
+            if active_item is not None and active_item.name == "map":
+                self.show_map = True
+                assets.sfx["paper"].play()
+            else:
+                self.show_map = False
+
+            if active_item is not None and active_item.name is None:
+                for target in common.mission_group:
+                    if self.player.pos_rect.colliderect(target.rect) and not target.hit:
+                        target.image = active_item.image
+                        target.hit = True
+                        self.player.inventory.remove_just_collided()
+                        assets.sfx["plop"].play()
+                        break
+                else:
+                    assets.sfx["nope"].play()
+                    self.info_particle_managers["invalid location"].spawn(
+                        pygame.mouse.get_pos(), pygame.Vector2(0, -40)
+                    )
+                    self.player.inventory.active_item = None
 
     def render_tiles(self):
         for layer in self.level.layers:
@@ -181,11 +202,16 @@ class Game(state.State):
 
         self.night.fill("grey10")
 
+        largest_radius = 45
+
         pygame.draw.circle(
-            self.night, (0, 0, 0, 40), self.player.pos - common.camera, 35
+            self.night, (0, 0, 0, 40), self.player.pos - common.camera, largest_radius
         )
         pygame.draw.circle(
-            self.night, (0, 0, 0, 20), self.player.pos - common.camera, 25
+            self.night,
+            (0, 0, 0, 20),
+            self.player.pos - common.camera,
+            largest_radius - 20,
         )
         pygame.draw.circle(
             self.night, (0, 0, 0, 0), self.player.pos - common.camera, 15
@@ -194,18 +220,24 @@ class Game(state.State):
         for _ in range(5):
             self.fast_particle_manager.spawn(
                 self.player.pos.copy(),
-                pygame.Vector2(1, 0).rotate(random.randint(0, 359)) * 60,
+                pygame.Vector2(1, 0).rotate(random.randint(0, 359)) * 80,
             )
         self.fast_particle_manager.render(self.night, pygame.BLEND_RGBA_SUB)
+        max_radius = 200
         pygame.draw.circle(
-            self.night, "grey10", self.player.pos - common.camera, 300, width=265
+            self.night,
+            "grey10",
+            self.player.pos - common.camera,
+            max_radius,
+            width=max_radius - largest_radius,
         )
 
         # add those other particles here, so they're drawn on top of the surface
         self.particle_manager.render(self.night, pygame.BLEND_RGBA_SUB)
 
-        renderer.render(self.night, (0, 0), static=True)
         renderer.render(self.darkener, (0, 0), static=True)
+        renderer.render(self.night, (0, 0), static=True)
+        # renderer.render(self.darkener, (0, 0), static=True)
 
     def render_hud(self):
         self.hud_surf.fill((0, 0, 0, 0))
@@ -220,7 +252,21 @@ class Game(state.State):
 
         self.player.inventory.render(target=self.hud_surf)
 
-        for manager in self.info_particle_managers.values():
+        if self.show_map:
+            rect = common.level_map.get_rect(center=self.hud_surf.get_rect().center)
+            renderer.render(
+                common.level_map,
+                rect,
+                static=True,
+            )
+            pygame.draw.rect(self.hud_surf, "#2E1308", rect.inflate(4, 4), width=2)
+            pygame.draw.rect(self.hud_surf, "#A67B5B", rect.inflate(8, 8), width=2)
+            pygame.draw.rect(self.hud_surf, "#87553B", rect.inflate(12, 12), width=2)
+
+        for name, manager in self.info_particle_managers.items():
+            if name in ["basket"]:
+                manager.render(self.hud_surf, static=False)
+                continue
             manager.render(self.hud_surf, static=True)
 
         renderer.render(self.hud_surf, (0, 0), static=True)

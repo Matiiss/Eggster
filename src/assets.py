@@ -66,6 +66,9 @@ def load_assets():
             "crunch": load_sound("crunch"),
             "sloop": load_sound("sloop"),
             "nope": load_sound("nope"),
+            "paper": load_sound("paper"),
+            "humm": load_sound("humm"),
+            "plop": load_sound("plop")
         }
     )
     maps.update({"level_1": Level(level_path("level_1"), load_tiles())})
