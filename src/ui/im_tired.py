@@ -96,7 +96,11 @@ class Label(Widget):
 
         self.font = self.font or assets.fonts["forward"][16]
 
+        prev_alignment = self.font.align
+        self.font.align = pygame.FONT_CENTER
         text_surf = self.font.render(text, True, self.fg)
+        self.font.align = prev_alignment
+
         self.width = self.width or text_surf.get_width() + self.padx * 2
         self.height = self.height or text_surf.get_height() + self.pady * 2
 

@@ -22,23 +22,26 @@
         "level_1.tmx": {
             "expandedGroupLayers": [
                 9,
-                10,
+                7,
                 5,
-                7
+                12,
+                10
             ],
-            "scale": 1.8495312499999998,
-            "selectedLayer": 2,
+            "scale": 1,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 532.2970347216356,
-                "y": 319.54042409394276
+                "x": 457,
+                "y": 567
             }
         }
     },
     "last.exportedFilePath": "C:/Users/Matiiss/PycharmProjects/Eggster/assets/maps",
     "last.imagePath": "C:/Users/Matiiss/PycharmProjects/Eggster/assets/images/tiles",
     "lastUsedTilesetExportFilter": "All Files (*)",
+    "map.height": 25,
     "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "map.lastUsedFormat": "tmx",
+    "map.width": 25,
     "openFiles": [
     ],
     "project": "base.tiled-project",

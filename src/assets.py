@@ -75,7 +75,7 @@ def load_assets():
             "wood_2": load_sound("wood_2")
         }
     )
-    maps.update({"level_1": Level(level_path("level_1"), load_tiles())})
+    # maps.update({"level_1": Level(level_path("level_1"), load_tiles())})
     fonts.update(
         {
             "default": {16: pygame.Font(None, 16)},

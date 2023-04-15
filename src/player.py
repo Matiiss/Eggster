@@ -18,7 +18,7 @@ from . import (
 
 
 class Player(entity.Entity):
-    def __init__(self, pos=(50, 50)):
+    def __init__(self, pos=(50, 50), angle=0):
         super().__init__()
 
         self.pos = pygame.Vector2(pos)
@@ -34,14 +34,13 @@ class Player(entity.Entity):
         # ~~dual collision detection for some tiles, hehe~~
         # nope, it's just masks now
         self.mask = pygame.Mask(pygame.Vector2(self.pos_rect.size), fill=True)
-
         self.velocity = pygame.Vector2(0, 0)
         self.vel = settings.PLAYER_VEL
         self.tiles = []
         self.masks = []
 
         self.state = enums.EntityState.IDLE
-        self.angle = 90
+        self.angle = angle
 
         self.channel = None
 

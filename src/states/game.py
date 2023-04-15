@@ -2,18 +2,24 @@ import random
 
 import pygame
 
-from src import common, states, player, assets, renderer, settings, particles
+from src import (
+    common,
+    states,
+    player,
+    assets,
+    renderer,
+    settings,
+    particles,
+    level as level_module,
+)
 
 
 class Game(states.State):
-    SHOOT_LIGHT = pygame.event.custom_type()
-
-    def __init__(self, level="level_1"):
+    def __init__(self, level_name="level_1"):
         super().__init__()
 
-        self.player = player.Player((540, 820))
-
-        level = assets.maps[level]
+        self.level_name = level_name
+        level = level_module.Level(assets.level_path(level_name), assets.load_tiles())
         common.collision_map = level.collision_map
         common.mask_collision_map = level.mask_map
         common.collectibles = level.collectibles
@@ -23,6 +29,20 @@ class Game(states.State):
         common.mission_started = False
 
         self.level = level
+        initial_pos = {
+            "level_1": (
+                14 * settings.TILE_SIZE + settings.TILE_SIZE / 2,
+                settings.TILE_SIZE + settings.TILE_SIZE / 2,
+            ),
+            "level_2": (
+                12 * settings.TILE_SIZE + settings.TILE_SIZE / 2,
+                settings.TILE_SIZE + settings.TILE_SIZE / 2,
+            ),
+        }
+        initial_rotation = {"level_1": -90, "level_2": -90}
+        self.player = player.Player(
+            initial_pos[level_name], initial_rotation[level_name]
+        )
 
         self.night = pygame.Surface(settings.SIZE, flags=pygame.SRCALPHA)
         self.night.fill("grey10")
@@ -62,15 +82,19 @@ class Game(states.State):
         )
 
         self.shooting_light = False
+        self.last_shot = 0
+
         self.show_map = False
 
-        self.total_time = 60 * 5  # seconds * minutes = total seconds
+        level_times = {"level_1": 60 * 10, "level_2": 60 * 10}
+        self.total_time = level_times[level_name]  # seconds * minutes = total seconds
         self.time_left = self.total_time
 
     def update(self):
         self.time_left -= common.dt
-        if self.time_left <= 0 or all(target.hit for target in common.mission_group):
-            common.current_state = states.State()
+        if self.time_left <= 0:
+            self.time_left = 0
+            return
 
         self.particle_manager.update()
         self.fast_particle_manager.update()
@@ -88,21 +112,15 @@ class Game(states.State):
             (common.mouse_world_pos - self.player.pos) or pygame.Vector2(1, 0)
         ).normalize()
 
-        for event in common.events:
-            # if event.type == pygame.MOUSEBUTTONDOWN:
-            #     if event.button == 1:
-            #         self.shooting_light = not self.shooting_light
-            #         if self.shooting_light:
-            #             pygame.time.set_timer(self.SHOOT_LIGHT, 50)
-            #         elif not self.shooting_light:
-            #             pygame.time.set_timer(self.SHOOT_LIGHT, 0)
-
-            if event.type == self.SHOOT_LIGHT:
-                for _ in range(10):
-                    self.particle_manager.spawn(
-                        self.player.pos.copy(),
-                        common.mouse_direction.rotate(random.randint(-30, 30)) * 150,
-                    )
+        current_time = pygame.time.get_ticks()
+        time_diff = current_time - self.last_shot
+        if self.shooting_light and time_diff >= 50:
+            self.last_shot = current_time + time_diff - 50
+            for _ in range(10):
+                self.particle_manager.spawn(
+                    self.player.pos.copy(),
+                    common.mouse_direction.rotate(random.randint(-30, 30)) * 150,
+                )
 
     def render(self):
         self.render_tiles()
@@ -112,6 +130,19 @@ class Game(states.State):
 
         self.render_light_overlay()  # todo turning this off could be an easter egg
         self.render_hud()
+
+        if self.time_left <= 0:
+            common.current_state = states.EndScreen(
+                "You ran out of time!\nBetter luck next time!",
+                common.screen.copy(),
+                self.level_name,
+            )
+        elif all(target.hit for target in common.mission_group):
+            common.current_state = states.EndScreen(
+                "Mission accomplished!\nYou saved children from tears!",
+                common.screen.copy(),
+                self.level_name,
+            )
 
     def update_camera(self):
         cam = (
@@ -141,11 +172,10 @@ class Game(states.State):
 
         if self.player.inventory.just_collided:
             if active_item is not None and active_item.name == "headlamp":
-                pygame.time.set_timer(self.SHOOT_LIGHT, 50)
+                self.last_shot = pygame.time.get_ticks()
                 self.shooting_light = True
                 # assets.sfx["humm"].play(loops=-1)
             else:
-                pygame.time.set_timer(self.SHOOT_LIGHT, 0)
                 self.shooting_light = False
 
             if active_item is not None and active_item.name == "map":
@@ -264,7 +294,9 @@ class Game(states.State):
             text = assets.fonts["forward"][14].render("map", True, "white")
             renderer.render(
                 text,
-                text.get_rect(midbottom=rect.inflate(12, 12).midtop + pygame.Vector2(0, -5)),
+                text.get_rect(
+                    midbottom=rect.inflate(12, 12).midtop + pygame.Vector2(0, -5)
+                ),
                 static=True,
                 target=self.hud_surf,
             )

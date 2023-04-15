@@ -30,7 +30,7 @@ class MainMenu(states.State):
                     font=assets.fonts["forward"][12],
                     width=100,
                     height=40,
-                    command=lambda: setattr(common, "current_state", SettingsMenu())
+                    command=lambda: setattr(common, "current_state", SettingsMenu()),
                 ),
                 ui.Button((settings.WIDTH / 2, 250), "Lore", width=100, height=40),
             ]
@@ -180,3 +180,56 @@ class SettingsMenu(states.State):
 
         self.ui_manager.render()
         renderer.render(assets.images["cobweb"], (settings.WIDTH - 64, 0))
+
+
+class EndScreen(states.State):
+    def __init__(self, msg, bg, level):
+        super().__init__()
+        self.bg = bg
+
+        self.ui_manager = ui.UIManagerLite()
+        self.ui_manager.add(
+            [
+                ui.Label(
+                    (settings.WIDTH / 2, 70),
+                    msg,
+                    font=assets.fonts["forward"][20],
+                    bg=(0, 0, 0, 0),
+                ),
+                ui.Button(
+                    (settings.WIDTH / 2, 220),
+                    "Play Again",
+                    font=assets.fonts["forward"][10],
+                    width=100,
+                    height=40,
+                    command=lambda: setattr(
+                        common, "current_state", states.Game(level)
+                    ),
+                ),
+                ui.Button(
+                    (settings.WIDTH / 2, 270),
+                    "Levels",
+                    font=assets.fonts["forward"][10],
+                    width=100,
+                    height=40,
+                    command=lambda: setattr(
+                        common, "current_state", LevelSelector()
+                    ),
+                ),
+                ui.Button(
+                    (settings.WIDTH / 2, 320),
+                    "Main Menu",
+                    font=assets.fonts["forward"][10],
+                    width=100,
+                    height=40,
+                    command=lambda: setattr(common, "current_state", MainMenu()),
+                ),
+            ]
+        )
+
+    def update(self):
+        self.ui_manager.update()
+
+    def render(self):
+        renderer.render(self.bg, (0, 0), static=True)
+        self.ui_manager.render()
