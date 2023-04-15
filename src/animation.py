@@ -6,7 +6,9 @@ from . import spritesheet, enums
 
 
 class Animation:
-    def __init__(self, sprite_sheet: spritesheet.AsepriteSpriteSheet, cycle: bool = True):
+    def __init__(
+        self, sprite_sheet: spritesheet.AsepriteSpriteSheet, cycle: bool = True
+    ):
         self._sprites = {}
         members = enums.EntityState.__members__
 

@@ -148,7 +148,7 @@ class SettingsMenu(states.State):
         self.ui_manager = ui.UIManagerLite()
 
         slider_rect = pygame.Rect(0, 0, 100, 20)
-        slider_rect.center = (settings.WIDTH / 2, 150)
+        slider_rect.center = (settings.WIDTH / 2, 130)
         self.ui_manager.add(
             [
                 ui.Label(
@@ -158,7 +158,7 @@ class SettingsMenu(states.State):
                     bg=(0, 0, 0, 0),
                 ),
                 ui.Label(
-                    (settings.WIDTH / 2, 120),
+                    (settings.WIDTH / 2, 110),
                     "Music volume",
                     font=assets.fonts["forward"][14],
                     bg=(0, 0, 0, 0),
@@ -169,15 +169,23 @@ class SettingsMenu(states.State):
                     callback=lambda value: setattr(common, "music_volume", value / 100),
                 ),
                 ui.Label(
-                    (settings.WIDTH / 2, 210),
+                    (settings.WIDTH / 2, 180),
                     "SFX volume",
                     font=assets.fonts["forward"][14],
                     bg=(0, 0, 0, 0),
                 ),
                 ui.HorizontalSlider(
-                    slider_rect.move(0, 90),
+                    slider_rect.move(0, 70),
                     initial_value=int(common.sfx_volume * 100),
                     callback=lambda value: setattr(common, "sfx_volume", value / 100),
+                ),
+                ui.Button(
+                    (settings.WIDTH / 2, 250),
+                    "Fullscreen toggle",
+                    width=170,
+                    height=30,
+                    font=assets.fonts["forward"][12],
+                    command=self.toggle_fullscreen,
                 ),
                 ui.Button(
                     (settings.WIDTH / 2, 320),
@@ -215,6 +223,20 @@ class SettingsMenu(states.State):
             if isinstance(widget, ui.HorizontalSlider):
                 widget.draw(common.screen)
 
+    @staticmethod
+    def toggle_fullscreen():
+        if settings.FULLSCREEN:
+            pygame.display.set_mode(
+                (settings.WIDTH, settings.HEIGHT), flags=settings.FLAGS
+            )
+            settings.FULLSCREEN = False
+        else:
+            pygame.display.set_mode(
+                (settings.WIDTH, settings.HEIGHT),
+                flags=settings.FLAGS | pygame.FULLSCREEN,
+            )
+            settings.FULLSCREEN = True
+
 
 class LoreMenu(states.State):
     def __init__(self):
@@ -232,6 +254,12 @@ class LoreMenu(states.State):
                     (settings.WIDTH / 2, settings.HEIGHT / 2),
                     "uhh...",
                     font=assets.fonts["forward"][12],
+                    bg=(0, 0, 0, 0),
+                ),
+                ui.Label(
+                    (settings.WIDTH / 2, settings.HEIGHT / 2 + 20),
+                    "in the README.md",
+                    font=assets.fonts["forward"][4],
                     bg=(0, 0, 0, 0),
                 ),
                 ui.Button(

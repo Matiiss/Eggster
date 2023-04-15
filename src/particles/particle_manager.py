@@ -50,11 +50,7 @@ class ParticleManager:
             img = self.mapping[particle.time]
             rect = self.mapping[particle.time].get_rect(center=particle.pos)
             renderer.render(
-                img,
-                rect,
-                target=target,
-                special_flags=special_flags,
-                static=static
+                img, rect, target=target, special_flags=special_flags, static=static
             )
 
     @classmethod

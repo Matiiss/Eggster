@@ -27,7 +27,9 @@ def load_sound(path, extension="mp3"):
 
 
 def load_fonts(path, sizes):
-    return {size: pygame.Font(os.path.join("assets/fonts", path), size) for size in sizes}
+    return {
+        size: pygame.Font(os.path.join("assets/fonts", path), size) for size in sizes
+    }
 
 
 @functools.cache
@@ -77,14 +79,20 @@ def load_assets():
             "plop": load_sound("plop"),
             "wood": load_sound("wood"),
             "wood_1": load_sound("wood_1"),
-            "wood_2": load_sound("wood_2")
+            "wood_2": load_sound("wood_2"),
         }
     )
     # maps.update({"level_1": Level(level_path("level_1"), load_tiles())})
     fonts.update(
         {
             "default": {16: pygame.Font(None, 16)},
-            "forward": {**load_fonts("FFFFORWA.TTF", [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 28, 32])},
-            "forward_regular": {**load_fonts("fff-forward.regular.ttf", [6, 8, 10, 12, 14, 16, 18])}
+            "forward": {
+                **load_fonts(
+                    "FFFFORWA.TTF", [4, 5, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 28, 32]
+                )
+            },
+            "forward_regular": {
+                **load_fonts("fff-forward.regular.ttf", [6, 8, 10, 12, 14, 16, 18])
+            },
         }
     )

@@ -58,3 +58,8 @@ and stuff, morning comes, and you're too late." for a bit more information.
 **Q:** So, there's a time machine. Why can't the Easter Bunny use it herself? Don't tell me she doesn't have time now...  
 **A:** There's a slight caveat with "Teleporter 4100", an entity can use it only a certain amount of times per year due to
 it using special Easter Energy for power. It's too complicated for you to understand anyway.
+
+---
+**Music credits**  
+Music generated using cgMusic: http://maciej.codeminion.com/2008/05/cgmusic-computers-create-music/  
+from: https://www.fakemusicgenerator.com/

@@ -26,4 +26,3 @@ class Basket(Collectible):
             inventory.Item(images["decorations"]["map"][0]["image"], name="map"),
             *[inventory.Item(images["eggs"][""][idx]["image"]) for idx in (1, 3, 4)],
         ]
-

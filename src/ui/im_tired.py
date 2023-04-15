@@ -230,7 +230,7 @@ class HorizontalSlider(Widget):
         max_value: int = 100,
         step: int = 1,
         callback: callable = lambda _: None,
-        initial_value: int = 50
+        initial_value: int = 50,
     ):
         self.min_value = min_value
         self.max_value = max_value
