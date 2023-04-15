@@ -2,15 +2,18 @@ import random
 
 import pygame
 
-from src import common, state, player, assets, renderer, settings, particles
+from src import common, states, player, assets, renderer, settings, particles
 
 
-class Game(state.State):
+class Game(states.State):
     SHOOT_LIGHT = pygame.event.custom_type()
 
-    def __init__(self):
+    def __init__(self, level="level_1"):
+        super().__init__()
+
         self.player = player.Player((540, 820))
-        level = assets.maps["level_1"]
+
+        level = assets.maps[level]
         common.collision_map = level.collision_map
         common.mask_collision_map = level.mask_map
         common.collectibles = level.collectibles
@@ -67,7 +70,7 @@ class Game(state.State):
     def update(self):
         self.time_left -= common.dt
         if self.time_left <= 0 or all(target.hit for target in common.mission_group):
-            common.current_state = state.State()
+            common.current_state = states.State()
 
         self.particle_manager.update()
         self.fast_particle_manager.update()
@@ -254,14 +257,17 @@ class Game(state.State):
 
         if self.show_map:
             rect = common.level_map.get_rect(center=self.hud_surf.get_rect().center)
-            renderer.render(
-                common.level_map,
-                rect,
-                static=True,
-            )
+            renderer.render(common.level_map, rect, static=True, target=self.hud_surf)
             pygame.draw.rect(self.hud_surf, "#2E1308", rect.inflate(4, 4), width=2)
             pygame.draw.rect(self.hud_surf, "#A67B5B", rect.inflate(8, 8), width=2)
             pygame.draw.rect(self.hud_surf, "#87553B", rect.inflate(12, 12), width=2)
+            text = assets.fonts["forward"][14].render("map", True, "white")
+            renderer.render(
+                text,
+                text.get_rect(midbottom=rect.inflate(12, 12).midtop + pygame.Vector2(0, -5)),
+                static=True,
+                target=self.hud_surf,
+            )
 
         for name, manager in self.info_particle_managers.items():
             if name in ["basket"]:

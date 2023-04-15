@@ -1,22 +1,23 @@
 import pygame
 
-from . import common, settings, state, assets, renderer
+from . import common, settings, states, assets, renderer
 
 pygame.init()
 common.screen = pygame.display.set_mode(
     (settings.WIDTH, settings.HEIGHT), flags=settings.FLAGS
 )
+pygame.display.set_caption("Eggster")
 common.clock = pygame.Clock()
 
 # init
 assets.load_assets()
 
-common.current_state = state.Game()
+common.current_state = states.MainMenu()
 
 running = True
 while running:
     common.dt = pygame.math.clamp(common.clock.tick(settings.FPS) / 1000, 0.008, 0.042)
-    pygame.display.set_caption(f"{common.clock.get_fps():.2f}")
+    # pygame.display.set_caption(f"{common.clock.get_fps():.2f}")
     common.screen.fill("black")
 
     common.events = pygame.event.get()

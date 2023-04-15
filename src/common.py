@@ -1,11 +1,11 @@
 import pygame
 
-from . import state, entity
+from . import states, entity
 
 
 screen: pygame.Surface
 clock: pygame.Clock
-current_state: state.State
+current_state: states.State
 
 camera: pygame.Vector2 = pygame.Vector2()
 

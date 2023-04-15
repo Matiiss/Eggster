@@ -22,8 +22,8 @@ class Animation:
         self._last_time = 0
 
     def update(self, state=None) -> pygame.Surface:
-        # if state is not None:
-        #     self.state = state
+        # if states is not None:
+        #     self.states = states
 
         current_time = pygame.time.get_ticks()
         if current_time - self._last_time >= self._sprite["duration"] or (

@@ -13,7 +13,7 @@ from . import (
     renderer,
     collectibles,
     inventory,
-    state,
+    states,
 )
 
 
@@ -264,7 +264,7 @@ class Player(entity.Entity):
                     self.inventory.update_inventory(collectible.items)
                     common.mission_started = True
 
-                    if isinstance(common.current_state, state.Game):
+                    if isinstance(common.current_state, states.Game):
                         common.current_state.info_particle_managers["basket"].spawn(
                             collectible.rect.center, pygame.Vector2(0, -40)
                         )

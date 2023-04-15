@@ -59,6 +59,7 @@ def load_assets():
             "eggs": AsepriteSpriteSheet(image_path("eggs/eggs")),
             "decorations": AsepriteSpriteSheet(image_path("decorations/decorations")),
             "headlamp": load_image("player/headlamp"),
+            "cobweb": load_image("decorations/cobweb")
         }
     )
     sfx.update(
@@ -68,14 +69,17 @@ def load_assets():
             "nope": load_sound("nope"),
             "paper": load_sound("paper"),
             "humm": load_sound("humm"),
-            "plop": load_sound("plop")
+            "plop": load_sound("plop"),
+            "wood": load_sound("wood"),
+            "wood_1": load_sound("wood_1"),
+            "wood_2": load_sound("wood_2")
         }
     )
     maps.update({"level_1": Level(level_path("level_1"), load_tiles())})
     fonts.update(
         {
             "default": {16: pygame.Font(None, 16)},
-            "forward": {**load_fonts("FFFFORWA.TTF", [6, 8, 10, 12, 14, 16, 18])},
+            "forward": {**load_fonts("FFFFORWA.TTF", [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 28, 32])},
             "forward_regular": {**load_fonts("fff-forward.regular.ttf", [6, 8, 10, 12, 14, 16, 18])}
         }
     )
