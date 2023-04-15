@@ -27,6 +27,7 @@ class InventoryManager:
 
         self.rects = []
         self.images = []
+        collisions = []
         for idx, item in enumerate(self.items.copy()):
             pos = (x, y)
             img = self.resize(item.image, size)
@@ -34,9 +35,16 @@ class InventoryManager:
             x += rect.width + 1
 
             self.collision(rect, item, idx)
+            collided = rect.collidepoint(pygame.mouse.get_pos())
+            collisions.append(collided)
 
             self.rects.append(rect)
             self.images.append(img)
+
+        if any(collisions):
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+        else:
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
         if self.items:
             rect = pygame.Rect(initial_x - 1, y, x - initial_x - 1, size[1])
@@ -54,7 +62,13 @@ class InventoryManager:
                 pygame.draw.rect(target, "blue", rect.inflate(2, 2), width=2)
 
         if self.rects:
-            pygame.draw.rect(target, "white", self.rects[-1], width=1)
+            # rect = self.rects[-1]
+            # initial_x = x = rect.x
+            # for rect in self.rects[:-1]:
+            #     x += rect.width + 1
+            # rect.width = x - initial_x - 1
+            # pygame.draw.rect(target, "white", self.rects[-1], width=1)
+            pass
 
     @staticmethod
     @functools.cache
@@ -75,4 +89,5 @@ class InventoryManager:
     def remove_just_collided(self):
         if self.just_collided:
             self.items.pop(self.collided_index)
+            self.rects.pop(self.collided_index)
             self.active_item = None

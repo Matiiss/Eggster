@@ -21,3 +21,6 @@ level_map: pygame.Surface
 
 mouse_world_pos: pygame.Vector2
 mouse_direction: pygame.Vector2
+
+music_volume: float = 1.0
+sfx_volume: float = 1.0

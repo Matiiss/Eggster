@@ -47,6 +47,11 @@ def level_path(path, extension="json"):
     return os.path.join("assets/maps", f"{path}.{extension}")
 
 
+def set_sound_volume(value):
+    for sound in sfx.values():
+        sound.set_volume(value)
+
+
 def load_assets():
     images.update(
         {
@@ -59,7 +64,7 @@ def load_assets():
             "eggs": AsepriteSpriteSheet(image_path("eggs/eggs")),
             "decorations": AsepriteSpriteSheet(image_path("decorations/decorations")),
             "headlamp": load_image("player/headlamp"),
-            "cobweb": load_image("decorations/cobweb")
+            "cobweb": load_image("decorations/cobweb"),
         }
     )
     sfx.update(

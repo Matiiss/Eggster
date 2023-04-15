@@ -7,16 +7,24 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "basket_0": {
-    "frame": { "x": 0, "y": 32, "w": 32, "h": 32 },
+   "basket_1": {
+    "frame": { "x": 32, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "goodies_0": {
-    "frame": { "x": 0, "y": 64, "w": 32, "h": 32 },
+   "goodies_2": {
+    "frame": { "x": 64, "y": 0, "w": 32, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+    "sourceSize": { "w": 32, "h": 32 },
+    "duration": 100
+   },
+   "target_3": {
+    "frame": { "x": 96, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
@@ -29,12 +37,13 @@
   "version": "1.x-dev",
   "image": "decorations.png",
   "format": "RGBA8888",
-  "size": { "w": 32, "h": 96 },
+  "size": { "w": 128, "h": 32 },
   "scale": "1",
   "frameTags": [
    { "name": "map", "from": 0, "to": 0, "direction": "forward", "color": "#000000ff" },
    { "name": "basket", "from": 1, "to": 1, "direction": "forward", "color": "#000000ff" },
-   { "name": "goodies", "from": 2, "to": 2, "direction": "forward", "color": "#000000ff" }
+   { "name": "goodies", "from": 2, "to": 2, "direction": "forward", "color": "#000000ff" },
+   { "name": "target", "from": 3, "to": 3, "direction": "forward", "color": "#000000ff" }
   ],
   "layers": [
    { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }

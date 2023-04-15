@@ -1,3 +1,5 @@
+import itertools
+
 import pygame
 
 from . import common, settings, states, assets, renderer
@@ -14,6 +16,15 @@ assets.load_assets()
 
 common.current_state = states.MainMenu()
 
+MUSIC_ENDED = pygame.event.custom_type()
+music_cycle = itertools.cycle([f"assets/music/track_{i}.mp3" for i in range(1, 4 + 1)])
+pygame.mixer.music.set_endevent(MUSIC_ENDED)
+pygame.mixer.music.load(next(music_cycle))
+pygame.mixer.music.queue(next(music_cycle))
+pygame.mixer.music.play()
+
+prev_sfx_volume = common.sfx_volume
+
 running = True
 while running:
     common.dt = pygame.math.clamp(common.clock.tick(settings.FPS) / 1000, 0.008, 0.042)
@@ -29,12 +40,19 @@ while running:
                 if event.mod & pygame.KMOD_CTRL:
                     settings.DEBUG = not settings.DEBUG
                     print(f"debug: {settings.DEBUG}")
+        elif event.type == MUSIC_ENDED:
+            pygame.mixer.music.queue(next(music_cycle))
 
     if settings.DEBUG:
         renderer.debug_stack = []
 
     common.current_state.update()
     common.current_state.render()
+
+    pygame.mixer.music.set_volume(common.music_volume)
+    if prev_sfx_volume != common.sfx_volume:
+        assets.set_sound_volume(common.sfx_volume)
+        prev_sfx_volume = common.sfx_volume
 
     if settings.DEBUG:
         for row_num, row in enumerate(common.mask_collision_map):
@@ -44,7 +62,10 @@ while running:
                     (col_num * settings.TILE_SIZE, row_num * settings.TILE_SIZE),
                 )
         if hasattr(common.current_state, "player"):
-            renderer.render(common.current_state.player.mask.to_surface(), common.current_state.player.pos_rect.topleft)
+            renderer.render(
+                common.current_state.player.mask.to_surface(),
+                common.current_state.player.pos_rect.topleft,
+            )
 
         for rect in renderer.debug_stack:
             surf, color, rect, width = rect

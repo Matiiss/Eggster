@@ -1,3 +1,4 @@
+import itertools
 import random
 
 import pygame
@@ -11,6 +12,7 @@ from src import (
     settings,
     particles,
     level as level_module,
+    ui,
 )
 
 
@@ -38,8 +40,12 @@ class Game(states.State):
                 12 * settings.TILE_SIZE + settings.TILE_SIZE / 2,
                 settings.TILE_SIZE + settings.TILE_SIZE / 2,
             ),
+            "level_3": (
+                23 * settings.TILE_SIZE + settings.TILE_SIZE / 2,
+                22 * settings.TILE_SIZE + settings.TILE_SIZE / 2,
+            ),
         }
-        initial_rotation = {"level_1": -90, "level_2": -90}
+        initial_rotation = {"level_1": -90, "level_2": -90, "level_3": 90}
         self.player = player.Player(
             initial_pos[level_name], initial_rotation[level_name]
         )
@@ -61,7 +67,7 @@ class Game(states.State):
         self.info_particle_managers: dict[str, particles.ParticleManager] = {
             "invalid location": particles.ParticleManager.from_string(
                 assets.fonts["forward"][8],
-                "invalid location",
+                "not on target",
                 10,
                 delay=[350, 200, 50, 25, 20, 20, 20, 20, 10, 10],
                 alpha=range(255, 5, -25),
@@ -86,15 +92,48 @@ class Game(states.State):
 
         self.show_map = False
 
-        level_times = {"level_1": 60 * 10, "level_2": 60 * 10}
+        level_times = {"level_1": 60 * 10, "level_2": 60 * 10, "level_3": 60 * 10}
         self.total_time = level_times[level_name]  # seconds * minutes = total seconds
         self.time_left = self.total_time
 
+        self.paused = False
+
+        self.ui_manager = ui.UIManagerLite()
+        self.ui_manager.add(
+            [
+                ui.Label(
+                    (settings.WIDTH / 2, 70),
+                    "Paused",
+                    font=assets.fonts["forward"][20],
+                    bg=(0, 0, 0, 0),
+                ),
+                ui.Button(
+                    (settings.WIDTH / 2, 270),
+                    "Resume",
+                    font=assets.fonts["forward"][10],
+                    width=100,
+                    height=40,
+                    command=lambda: setattr(self, "paused", False),
+                ),
+                ui.Button(
+                    (settings.WIDTH / 2, 320),
+                    "Main Menu",
+                    font=assets.fonts["forward"][10],
+                    width=100,
+                    height=40,
+                    command=lambda: setattr(common, "current_state", states.MainMenu()),
+                ),
+            ]
+        )
+
     def update(self):
+        if self.paused:
+            self.ui_manager.update()
+            return
+
         self.time_left -= common.dt
         if self.time_left <= 0:
             self.time_left = 0
-            return
 
         self.particle_manager.update()
         self.fast_particle_manager.update()
@@ -122,6 +161,11 @@ class Game(states.State):
                     common.mouse_direction.rotate(random.randint(-30, 30)) * 150,
                 )
 
+        for event in common.events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.paused = not self.paused
+
     def render(self):
         self.render_tiles()
 
@@ -132,12 +176,14 @@ class Game(states.State):
         self.render_hud()
 
         if self.time_left <= 0:
+            pygame.display.flip()
             common.current_state = states.EndScreen(
                 "You ran out of time!\nBetter luck next time!",
                 common.screen.copy(),
                 self.level_name,
             )
         elif all(target.hit for target in common.mission_group):
+            pygame.display.flip()
             common.current_state = states.EndScreen(
                 "Mission accomplished!\nYou saved children from tears!",
                 common.screen.copy(),
@@ -235,7 +281,7 @@ class Game(states.State):
 
         self.night.fill("grey10")
 
-        largest_radius = 45
+        largest_radius = 45 if common.mission_started else 70
 
         pygame.draw.circle(
             self.night, (0, 0, 0, 40), self.player.pos - common.camera, largest_radius
@@ -284,6 +330,14 @@ class Game(states.State):
             self.hud_surf.blit(pos_surf, (10, 10))
 
         self.player.inventory.render(target=self.hud_surf)
+        if self.player.inventory.rects:
+            initial_x = x = self.player.inventory.rects[-1].x
+            for rect in self.player.inventory.rects[:-1]:
+                x += rect.width + 1
+            self.player.inventory.rects[-1].width = x - initial_x + 3
+            pygame.draw.rect(
+                self.hud_surf, "white", self.player.inventory.rects[-1], width=1
+            )
 
         if self.show_map:
             rect = common.level_map.get_rect(center=self.hud_surf.get_rect().center)
@@ -306,6 +360,29 @@ class Game(states.State):
                 manager.render(self.hud_surf, static=False)
                 continue
             manager.render(self.hud_surf, static=True)
+
+        # show objectives
+        if self.time_left > 0 and not all(
+            target.hit for target in common.mission_group
+        ):
+            objective = assets.fonts["forward"][12].render("Objective:", True, "white")
+            objective_rect = objective.get_rect(topleft=(10, 10))
+            if not common.mission_started:
+                img = assets.images["decorations"]["goodies"][0]["image"]
+            else:
+                img = assets.images["decorations"]["target"][0]["image"]
+            renderer.render(
+                objective, objective_rect, target=self.hud_surf, static=True
+            )
+            renderer.render(
+                img,
+                img.get_rect(midleft=objective_rect.midright),
+                target=self.hud_surf,
+                static=True,
+            )
+
+        if self.paused:
+            self.ui_manager.render(target=self.hud_surf, static=True)
 
         renderer.render(self.hud_surf, (0, 0), static=True)
 

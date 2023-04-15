@@ -17,22 +17,34 @@ class MainMenu(states.State):
                     font=assets.fonts["forward"][28],
                     bg=(0, 0, 0, 0),
                 ),
+                ui.Label(
+                    (settings.WIDTH / 2, 100),
+                    "by Matt",
+                    font=assets.fonts["forward"][14],
+                    bg=(0, 0, 0, 0),
+                ),
                 ui.Button(
-                    (settings.WIDTH / 2, 150),
+                    (settings.WIDTH / 2, 170),
                     "Play",
                     width=100,
                     height=40,
                     command=lambda: setattr(common, "current_state", LevelSelector()),
                 ),
                 ui.Button(
-                    (settings.WIDTH / 2, 200),
+                    (settings.WIDTH / 2, 220),
                     "Settings",
                     font=assets.fonts["forward"][12],
                     width=100,
                     height=40,
                     command=lambda: setattr(common, "current_state", SettingsMenu()),
                 ),
-                ui.Button((settings.WIDTH / 2, 250), "Lore", width=100, height=40),
+                ui.Button(
+                    (settings.WIDTH / 2, 270),
+                    "Lore",
+                    width=100,
+                    height=40,
+                    command=lambda: setattr(common, "current_state", LoreMenu()),
+                ),
             ]
         )
 
@@ -134,11 +146,85 @@ class SettingsMenu(states.State):
     def __init__(self):
         super().__init__()
         self.ui_manager = ui.UIManagerLite()
+
+        slider_rect = pygame.Rect(0, 0, 100, 20)
+        slider_rect.center = (settings.WIDTH / 2, 150)
         self.ui_manager.add(
             [
                 ui.Label(
                     (settings.WIDTH / 2, 60),
                     "Settings",
+                    font=assets.fonts["forward"][20],
+                    bg=(0, 0, 0, 0),
+                ),
+                ui.Label(
+                    (settings.WIDTH / 2, 120),
+                    "Music volume",
+                    font=assets.fonts["forward"][14],
+                    bg=(0, 0, 0, 0),
+                ),
+                ui.HorizontalSlider(
+                    slider_rect.copy(),
+                    initial_value=int(common.music_volume * 100),
+                    callback=lambda value: setattr(common, "music_volume", value / 100),
+                ),
+                ui.Label(
+                    (settings.WIDTH / 2, 210),
+                    "SFX volume",
+                    font=assets.fonts["forward"][14],
+                    bg=(0, 0, 0, 0),
+                ),
+                ui.HorizontalSlider(
+                    slider_rect.move(0, 90),
+                    initial_value=int(common.sfx_volume * 100),
+                    callback=lambda value: setattr(common, "sfx_volume", value / 100),
+                ),
+                ui.Button(
+                    (settings.WIDTH / 2, 320),
+                    "Back",
+                    width=80,
+                    height=30,
+                    font=assets.fonts["forward"][12],
+                    command=lambda: setattr(common, "current_state", MainMenu()),
+                ),
+            ]
+        )
+
+        self.particle_manager = particles.ParticleManager(assets.images["particles"])
+
+    def update(self):
+        self.ui_manager.update()
+        self.particle_manager.update()
+
+    def render(self):
+        for pos in [
+            (0, 0),
+            (settings.WIDTH, 0),
+            (settings.WIDTH, settings.HEIGHT),
+            (0, settings.HEIGHT),
+        ]:
+            for _ in range(1):
+                self.particle_manager.spawn(
+                    pos,
+                    pygame.Vector2(1, 0).rotate(random.randint(0, 359)) * 80,
+                )
+        self.particle_manager.render(static=True)
+
+        self.ui_manager.render()
+        for widget in self.ui_manager.widgets:
+            if isinstance(widget, ui.HorizontalSlider):
+                widget.draw(common.screen)
+
+
+class LoreMenu(states.State):
+    def __init__(self):
+        super().__init__()
+        self.ui_manager = ui.UIManagerLite()
+        self.ui_manager.add(
+            [
+                ui.Label(
+                    (settings.WIDTH / 2, 60),
+                    "Lore",
                     font=assets.fonts["forward"][20],
                     bg=(0, 0, 0, 0),
                 ),
@@ -212,9 +298,7 @@ class EndScreen(states.State):
                     font=assets.fonts["forward"][10],
                     width=100,
                     height=40,
-                    command=lambda: setattr(
-                        common, "current_state", LevelSelector()
-                    ),
+                    command=lambda: setattr(common, "current_state", LevelSelector()),
                 ),
                 ui.Button(
                     (settings.WIDTH / 2, 320),
