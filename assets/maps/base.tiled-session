@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "level_1.tmx",
+    "activeFile": "level_3.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -24,30 +24,30 @@
         },
         "level_1.tmx": {
             "expandedGroupLayers": [
-                5,
-                10,
                 9,
+                7,
+                5,
                 12,
-                7
+                10
             ],
             "scale": 1,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 497,
-                "y": 479
+                "x": 457,
+                "y": 567
             }
         },
         "level_2.tmx": {
             "expandedGroupLayers": [
-                2,
+                4,
                 3,
-                4
+                2
             ],
             "scale": 1.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 399.66666666666663,
-                "y": 400
+                "x": 374.66666666666663,
+                "y": 406
             }
         },
         "level_3.tmx": {
@@ -57,7 +57,7 @@
             "scale": 1.501,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 399.40039973351105,
+                "x": 399.73351099267154,
                 "y": 399.73351099267165
             }
         }
@@ -77,10 +77,10 @@
     ],
     "project": "base.tiled-project",
     "recentFiles": [
+        "level_1.tmx",
+        "level_2.tmx",
         "base.tsx",
         "level_3.tmx",
-        "level_2.tmx",
-        "level_1.tmx",
         "level_1.json"
     ],
     "resizeMap.removeObjects": true,
