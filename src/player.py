@@ -177,7 +177,6 @@ class Player(entity.Entity):
             self.channel = assets.sfx["crunch"].play()
 
     @staticmethod
-    @functools.lru_cache(maxsize=512)
     def collides(cx: int, cy: int) -> bool:
         map_ = common.collision_map
         if 0 <= cy < len(map_) and 0 <= cx < len(map_[0]):
