@@ -1,4 +1,5 @@
 import random
+import sys
 
 import pygame
 
@@ -45,6 +46,13 @@ class MainMenu(states.State):
                     height=40,
                     command=lambda: setattr(common, "current_state", LoreMenu()),
                 ),
+                ui.Button(
+                    (settings.WIDTH / 2, 320),
+                    "Exit",
+                    width=100,
+                    height=40,
+                    command=lambda: sys.exit()
+                )
             ]
         )
 
