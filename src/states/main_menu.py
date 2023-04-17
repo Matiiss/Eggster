@@ -19,7 +19,7 @@ class MainMenu(states.State):
                 ),
                 ui.Label(
                     (settings.WIDTH / 2, 100),
-                    "by Matt",
+                    "by Matiiss",
                     font=assets.fonts["forward"][14],
                     bg=(0, 0, 0, 0),
                 ),
