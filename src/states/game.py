@@ -191,12 +191,34 @@ class Game(states.State):
             )
 
     def update_camera(self):
-        cam = (
-            self.player.rect.center
-            - pygame.Vector2(settings.WIDTH, settings.HEIGHT) / 2
-            - common.camera
-        ) * 0.05
-        common.camera += round(cam)
+        # cam = (
+        #     self.player.rect.center
+        #     - pygame.Vector2(settings.WIDTH, settings.HEIGHT) / 2
+        #     - common.camera
+        # ) * 0.05
+        # common.camera += round(cam)
+
+        # todo look into this issue with more stuttering camera
+        # or nvm because both seem to be similarly stuttering, this sucks
+        # maybe the effect is even more so highlighted by the rigid (aliased) circle around the player
+        # the above implementation seems to have a milder effect of this stuttering and I have no clue why...
+        # maybe the issue is that the position is that the player's position is not rounded?
+        # meh, next time gotta implement a proper camera ig, not that it would immediately fix this issue
+
+        # aaa, these comments suck, not that anyone would read them
+
+        # some conclusions: I have no clue what the fudge is going on, going to figure it out in another game I guess
+        # will keep this implementation below using vector methods from now on though
+
+        common.camera = common.camera.lerp(
+            (
+                round(pygame.Vector2(self.player.rect.center), 0)
+                - pygame.Vector2(settings.WIDTH, settings.HEIGHT) / 2
+            ),
+            0.05,
+        )
+        common.camera = round(common.camera)
+
         # easter egg??? nope
         common.camera.x, common.camera.y = pygame.math.clamp(
             common.camera.x,

@@ -6,7 +6,7 @@ from . import common, settings, states, assets, renderer
 
 pygame.init()
 common.screen = pygame.display.set_mode(
-    (settings.WIDTH, settings.HEIGHT), flags=settings.FLAGS
+    (settings.WIDTH, settings.HEIGHT), flags=settings.FLAGS  # vsync=True whatever
 )
 pygame.display.set_caption("Eggster")
 common.clock = pygame.Clock()
